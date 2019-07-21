@@ -2,8 +2,8 @@
 # Author: Katherine Lauck
 # Last updated: 2 November 2018
 
-dataDir <- 'G://My Drive/projects/songbird-occupancy/results/data/'
-outputDir <- 'G://My Drive/projects/songbird-occupancy/results/data/surveyCov/original/'
+dataDir <- paste0(PROJECT_DIRECTORY,'/results/data/')
+outputDir <- paste0(PROJECT_DIRECTORY,'/results/data/surveyCov/original/')
 
 
 ##### Gather survey-specific data

@@ -9,8 +9,8 @@
 require('rio')
 
 # Data directory
-dataDir <- "G://My Drive/projects/songbird-occupancy/data/pointCount"
-outputDir <- "G://My Drive/projects/songbird-occupancy/results"
+dataDir <- paste0(PROJECT_DIRECTORY,'/data/pointCount')
+outputDir <- paste0(PROJECT_DIRECTORY,"/results")
 
 
 # List files

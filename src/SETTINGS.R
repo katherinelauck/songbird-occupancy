@@ -38,6 +38,8 @@ require("plyr")
 require('scales')
 require('tidyr')
 require('stringr')
+require('foreach')
+require('doParallel')
 
 # choose from 2 options for DATASET.
 # "dummy": includes 120 dummy points and dummy site covariate values, as well as
@@ -46,14 +48,15 @@ require('stringr')
 
 DATASET <- "dummy"
 
-PROJECT_DIRECTORY <- 'G:/My Drive/projects/songbird-occupancy'
+PROJECT_DIRECTORY <- 'C:/Users/kathe/Documents/songbird-occupancy'
 
 # Choose where the input is. This should correspond to a project directory containing
 # a data/ directory and a results/ directory.
-INPUT_DIRECTORY <- 'G:/My Drive/projects/songbird-occupancy/results/data'
+INPUT_DIRECTORY <- 'C:/Users/kathe/Documents/songbird-occupancy/results/data'
 
 # Choose where the output should be stored.
-OUTPUT_DIRECTORY <- "G:/My Drive/projects/songbird-occupancy/results/presenceOutput"
+#OUTPUT_DIRECTORY <- "G:/My Drive/projects/songbird-occupancy/results/presenceOutput"
+OUTPUT_DIRECTORY <- "C:/Users/kathe/Documents/songbird-occupancy/results/presenceOutput"
 
 # choose which spp are analyzed. Two options are available.
 # NAMES_ENOUGH_DATA : a list of spp that probably have enough data, or almost
@@ -74,7 +77,6 @@ NAMES_ENOUGH_DATA <- c(
   "Anthreptes rhodolaemus",
   "Anthreptes simplex",
   "Arachnothera longirostra",
-  "Arachnothera Longirostra",
   "Arachnothera modesta",
   "Argusianus argus",
   "Blythipicus rubiginosus",

@@ -94,6 +94,31 @@ make.formula <- function(x,param){
   return(as.formula(form))
 }
 
+make.formula.char <- function(x,param){
+  form <- paste0(param,
+                 " ~ ",
+                 gsub(
+                   pattern = "( P )",
+                   " + ",
+                   sub(
+                     pattern = "\\)$",
+                     "",
+                     sub(
+                       pattern=paste0(
+                         "^",
+                         param,
+                         "\\(",
+                         collapse = ""
+                       ),
+                       "",
+                       x
+                     ))))
+  if(form==paste0(param," ~ ")){
+    form <- paste0(form,1,collapse = "")
+  }
+  return(form)
+}
+
 ##### Run a set of models built using RPresence, assuming the single season
 ##### occupancy model first described by McKenzie (2002)
 # Author: Katherine Lauck
@@ -121,6 +146,15 @@ make.formula <- function(x,param){
 # point.names = a character vector of the names of the points
 # incl.survey = Should survey (i.e. occasion) be included as a covariate of p?
 #               Default is 1.
+# global.p,
+# global.psi =  Character vector covariates describing the global model for p or psi,
+#               or if iterating over more than one species, a list of lists of p
+#               or psi covariates. Must be named with species' names. If set to 
+#               NULL (the default) while p.model/psi.model as appropriate is set
+#               to NULL, will behave as descibed below. If defined when p.model/
+#               psi.model is set to NULL, will limit the global model to its 
+#               elements. May not be defined while p.model/psi.model is also
+#               defined.
 # p.model,
 # psi.model =   NULL or list of p or psi models, or if iterating over more than
 #               one species, a list of lists of p or psi models. If set to NULL
@@ -148,6 +182,8 @@ runModelSet <- function(
   point.names,
   incl.survey=1,
   focus.param,
+  global.p = NULL,
+  global.psi = NULL,
   p.model = NULL,
   psi.model = NULL,
   ...
@@ -168,9 +204,15 @@ runModelSet <- function(
   #  stop("point names are not a character vector")
   #  }
   # Are there as many point names as rows in occ.data?
-  
+  if(!is.null(global.p)&&!is.null(p.model)){
+    stop('One of either global.p or p.model must be NULL')
+  }
+  if(!is.null(global.psi)&&!is.null(psi.model)){
+    stop('One of either global.psi or psi.model must be NULL')
+  }
   # Create basic Pao object
   print(data.path)
+  time1 <- Sys.time()
   occ.data <- data.frame(matrix(as.numeric(unlist(import(data.path))),
                                 nrow = 235,ncol = 5))
   spp.name <- sub(
@@ -193,22 +235,28 @@ runModelSet <- function(
   
   ### Build model set
   # Decide whether to build from scratch or use supplied model forms
-  if(is.null(p.model)){
+  if(is.null(p.model)&&is.null(global.p)){
     # Decide whether survey should be included as a covariate, then build p set
     if(incl.survey == 1) {
       p.cov <- modCombos(param = "p", covs = c("SURVEY",names(survey.cov)))
     } else {
       p.cov <- modCombos(param = "p", covs = names(survey.cov))
     }
-  } else {
+  } else if(is.null(global.p)) {
     p.cov <- p.model[[which(names(p.model)==spp.name)]]
+  } else if(is.null(p.model)) {
+    p.cov <- modCombos(param = 'p',
+                       covs = global.p[[which(names(global.p)==spp.name)]])
   }
   
-  if(is.null(psi.model)){
+  if(is.null(psi.model)&&is.null(global.psi)){
     # build psi set
     psi.cov <- modCombos(param = "psi", covs = names(site.cov))
-  } else {
+  } else if(is.null(global.psi)) {
     psi.cov <- psi.model[[which(names(psi.model)==spp.name)]]
+  } else if(is.null(psi.model)) {
+    psi.cov <- modCombos(param = 'psi',
+                         covs = global.psi[[which(names(global.psi)==spp.name)]])
   }
   
   # Organize to correct form for occMod()
@@ -217,23 +265,58 @@ runModelSet <- function(
     MARGIN = 1,
     function(x) list(x$Var1,x$Var2)
   )
+  print(length((modForm)))
   # run models
   cl <- makeCluster(detectCores()-1)
   clusterExport(cl,c('modForm','pao'),envir = environment())
   clusterEvalQ(cl,library('RPresence'))
   run.models <- createAicTable(
-    pblapply(
+    parLapply(
       modForm,
-      occMod,
-      data = pao,
-      type = "so",
-      ...,
+      fun = function(x) {
+        gc()
+        return(occMod(x,
+               data = pao,
+               type = "so",
+               ...))},
       cl=cl
-    ),
-    use.aicc=T
+    )
+    ,use.aicc=T
   )
   stopCluster(cl)
   gc()
+  # Foreach version
+  # cl <- makeCluster(detectCores()-1)
+  # clusterExport(cl,c('modForm','pao'),envir = environment())
+  # clusterEvalQ(cl,library('RPresence'))
+  # registerDoParallel(cl)
+  # 
+  # run.models <- createAicTable(
+  #   foreach(i = modForm) %dopar%
+  #     occMod(i,data = pao,type = 'so',...)
+  # , use.aicc = T)
+  # 
+  # stopCluster(cl)
+  # gc()
+  # 
+  
+  # cl <- makeCluster(detectCores()-1)
+  # clusterExport(cl,c('modForm','pao'),envir = environment())
+  # clusterEvalQ(cl,library('RPresence'))
+  # dir.create(file.path(destination, spp.name))
+  # clusterApply(cl = cl,x = seq_along(modForm),fun = function(x){
+  #   saveRDS(occMod(modForm[[x]],data = pao,type = 'so',...),
+  #           file = paste0(destination,'/',spp.name,'/',spp.name,x,'.rds'))
+  #   gc()
+  # })
+  # 
+  # run.models <- createAicTable(parLapply(cl = cl,
+  #                         list.files(paste0(destination,'/',spp.name),
+  #                                    full.names = T),
+  #                         readRDS))
+  # stopCluster(cl)
+  # unlink(list.files(paste0(destination,'/',spp.name),full.names = T))
+  # gc()
   ##### decide what output should occur. If a destination folder is not supplied,
   ##### the default output is to the R global environment
   if(is.null(destination)){
@@ -275,31 +358,58 @@ runModelSet <- function(
       file = paste0(destination,"/",spp.name,"/",spp.name,"AIC",".rds")
     )
     # create directory for data frames of site-specific parameter estimates
-    dir.create(
-      file.path(
-        paste0(destination,"/",spp.name),
-        paste0("fitted",focus.param)
-      )
-    )
+    # dir.create(
+    #   file.path(
+    #     paste0(destination,"/",spp.name),
+    #     paste0("fitted",focus.param)
+    #   )
+    # )
     # export data frames of site-specific parameter estimates
-    lapply(
-      run.models$models,
-      function(x) export(
-        fitted(x,param = focus.param),
-        file = paste0(
-          destination,
-          "/",
-          spp.name,
-          "/",
-          "fitted",
-          focus.param,
-          "/",
-          x$modname,
-          ".csv"
-        )
-      )
-    )
+    
+    # models <- run.models$models
+    # cl <- makeCluster(6)
+    # clusterExport(cl,c('models','focus.param'),envir = environment())
+    # clusterEvalQ(cl,library('rio'))
+    # registerDoParallel(cl)
+    # foreach(x = models) %dopar%
+    #   export(
+    #     fitted(x,param = focus.param),
+    #     file = paste0(
+    #       destination,
+    #       "/",
+    #       spp.name,
+    #       "/",
+    #       "fitted",
+    #       focus.param,
+    #       "/",
+    #       x$modname,
+    #       ".csv"
+    #     )
+    #   )
+    gc()
+    # lapply(
+    #   run.models$models,
+    #   function(x) export(
+    #     fitted(x,param = focus.param),
+    #     file = paste0(
+    #       destination,
+    #       "/",
+    #       spp.name,
+    #       "/",
+    #       "fitted",
+    #       focus.param,
+    #       "/",
+    #       x$modname,
+    #       ".csv"
+    #     )
+    #   )
+    #   #,cl = cl
+    # )
+    #stopCluster(cl)
+    #gc()
     print(paste("finished",data.path,sep = " "))
+    time2 <- Sys.time()
+    print(time2-time1)
   }
 }
 
@@ -394,7 +504,7 @@ detect <- function(x,pt.list,survey.list,t){
 
 mergeGISData <- function(x,ref){
   tmp <- import(x)
-  nameAdd <- sub("\\.csv$","",sub('G(.)*\\/','',x))
+  nameAdd <- sub("\\.csv$","",sub('^(.)*\\/','',x))
   # if(nchar(nameAdd)>10){
   #   nameAdd <- substr(nameAdd,1,10)
   # }
@@ -410,12 +520,14 @@ mergeGISData <- function(x,ref){
                        value = T),
                   'PERCENTAGE')]
     tmp <- spread(tmp,'CIFOR Forest type class','PERCENTAGE',fill = 0)
-    colnames(tmp)[2:4] <- c(paste0('CIFORPercent',
-                                   colnames(tmp)[2],
+    colnames(tmp)[2:4] <- c(paste0('Percent',
+                                   gsub('-','',gsub(" ","",colnames(tmp)[2])),
                                    str_extract(nameAdd,'(100|500|1000|1500)m')),
-                            paste0('CIFORPercent',colnames(tmp)[3],
+                            paste0('Percent',
+                                   gsub('-','',gsub(" ","",colnames(tmp)[3])),
                                    str_extract(nameAdd,'(100|500|1000|1500)m')),
-                            paste0('CIFORPercent',colnames(tmp)[4],
+                            paste0('Percent',
+                                   gsub('-','',gsub(" ","",colnames(tmp)[4])),
                                    str_extract(nameAdd,'(100|500|1000|1500)m')))
     
   }else if(any(grep(x = colnames(tmp),
@@ -443,4 +555,31 @@ mergeGISData <- function(x,ref){
   #                            paste0(nameAdd,colnames(reference[length(colnames(reference))])))
   #   }
   return(ref)
+}
+
+exportFitted <- function(run.models,destination,spp.name,focus.param){
+  dir.create(
+    file.path(
+      paste0(destination,"/",spp.name),
+      paste0("fitted",focus.param)
+    )
+  )
+  lapply(
+    run.models$models,
+    function(x) export(
+      fitted(x,param = focus.param),
+      file = paste0(
+        destination,
+        "/",
+        spp.name,
+        "/",
+        "fitted",
+        focus.param,
+        "/",
+        x$modname,
+        ".csv"
+      )
+    )
+    #,cl = cl
+  )
 }

@@ -17,12 +17,13 @@
 
 require('rio')
 
-
-source('src/surveyCov.R')
-source('src/unitCov.R')
-source('src/buildDetectionHistories.R')
-source("src/HighstatLibV10.R")
-inputDir <- 'G:/My Drive/projects/songbird-occupancy/results/'
+source('C:/Users/kathe/Documents/songbird-occupancy/src/SETTINGS.R')
+source(paste0(PROJECT_DIRECTORY,'/src/functions.R'))
+source(paste0(PROJECT_DIRECTORY,'/src/surveyCov.R'))
+source(paste0(PROJECT_DIRECTORY,'/src/unitCov.R'))
+source(paste0(PROJECT_DIRECTORY,'/src/buildDetectionHistories.R'))
+source(paste0(PROJECT_DIRECTORY,'/src/HighstatLibV10.R'))
+inputDir <- paste0(PROJECT_DIRECTORY,'/results/')
 
 spp <- table(pc[,"species"],pc[,"observer1"])[-1,]
 spp <- data.frame(species=names(spp[,"Indah"]),Indah=spp[,"Indah"],Katie=spp[,"Katie"],
@@ -44,10 +45,9 @@ export(spp,paste0(inputDir,"data/sppList.csv"))
 # corvif(unit.cov.scaled[,-c(which(names(unit.cov.scaled)=="understoryComplexity"),
 #                            which(names(unit.cov.scaled)=="anthropogenicDisturbance"),
 #                            which(names(unit.cov.scaled)=="ciforFC100MAJORITY"))])
-corvif(unit.cov.scaled[,-c(grep(x = colnames(unit.cov.scaled),pattern = 'Percentage'),
-                           grep(x = colnames(unit.cov.scaled),pattern = '500'))])
-unit.cov.scaled <- unit.cov.scaled[,-c(grep(x = colnames(unit.cov.scaled),pattern = '500'))]
-
+corvif(unit.cov.scaled)
+# unit.cov.scaled <- unit.cov.scaled[,-c(grep(x = colnames(unit.cov.scaled),pattern = '500'))]
+# 
 
 dummy.unit.cov <- apply(unit.cov.scaled,MARGIN = 2,# create sequences to be used for 
                         function(x) {              # investigating the effects of specific
@@ -71,17 +71,16 @@ dum.unit.cov <- cbind(v1=rep(mean(unit.cov.scaled[,1],na.rm = T),times = 120),
                       v11=rep(mean(unit.cov.scaled[,11],na.rm = T),times = 120),
                       v12=rep(mean(unit.cov.scaled[,12],na.rm = T),times = 120),
                       v13=rep(mean(unit.cov.scaled[,13],na.rm = T),times = 120),
-                      v14=rep(mean(unit.cov.scaled[,14],na.rm = T),times = 120),
-                      v15=rep(mean(unit.cov.scaled[,15],na.rm = T),times = 120),
-                      v16=rep(mean(unit.cov.scaled[,16],na.rm = T),times = 120)
+                      v14=rep(mean(unit.cov.scaled[,14],na.rm = T),times = 120)
                       
 )
+colnames(dum.unit.cov) <- names(unit.cov.scaled)
 
 # add sequences to the specific factors of interest. As many as four may be compared.
 #dum.unit.cov[c(1:30),6] <- as.factor(c(rep(0,10),rep(1,10),rep(2,10)))
-dum.unit.cov[c(31:60),grep('Roads',colnames(unit.cov.scaled))] <- dummy.unit.cov[,1]
-dum.unit.cov[c(61:90),grep('Height',colnames(unit.cov.scaled))] <- dummy.unit.cov[,1]
-#dum.unit.cov[c(91:120),12] <- dummy.unit.cov[,1]
+dum.unit.cov[c(31:60),grep('Road',colnames(unit.cov.scaled))] <- dummy.unit.cov[,1]
+dum.unit.cov[c(61:90),grep('height100',colnames(unit.cov.scaled))] <- dummy.unit.cov[,1]
+dum.unit.cov[c(91:120),grep('height500',colnames(unit.cov.scaled))] <- dummy.unit.cov[,1]
 
 unit.dummy <- unit.cov.scaled
 unit.dummy[116:(115+120),] <- dum.unit.cov
@@ -89,11 +88,11 @@ unit.dummy[116:(115+120),] <- dum.unit.cov
 export(unit.dummy,paste0(inputDir,"data/siteCov/dummy/unit.cov.dummy.csv"))
 
 # dummy surveys
-s1 <- survey.cov.scaled[1:115,]
-s2 <- survey.cov.scaled[116:(115*2),]
-s3 <- survey.cov.scaled[(115*2+1):(115*3),]
-s4 <- survey.cov.scaled[(115*3+1):(115*4),]
-s5 <- survey.cov.scaled[(115*4+1):(115*5),]
+s1 <- survey.data.scaled[1:115,]
+s2 <- survey.data.scaled[116:(115*2),]
+s3 <- survey.data.scaled[(115*2+1):(115*3),]
+s4 <- survey.data.scaled[(115*3+1):(115*4),]
+s5 <- survey.data.scaled[(115*4+1):(115*5),]
 s1[116:(115+120),] <- matrix(nrow=120,ncol=3)
 s2[116:(115+120),] <- matrix(nrow=120,ncol=3)
 s3[116:(115+120),] <- matrix(nrow=120,ncol=3)
@@ -129,7 +128,7 @@ clusterExport(cl,c('dummy.occ','dummy.occupancy'))
 clusterEvalQ(cl,{
   library('rio')
 })
-system.time(pblapply(dummy.occ,function(path,dummy.occupancy){
+system.time(parLapply(dummy.occ,function(path,dummy.occupancy){
   temp <- import(path)
   temp <- rbind(temp,dummy.occupancy)
   dummy.path <- sub(pattern = "detectionHistories",

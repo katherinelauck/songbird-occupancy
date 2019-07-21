@@ -3,9 +3,9 @@
 # Last updated: 2 November 2018
 #
 ##
-
-dataDir <- 'G://My Drive/projects/songbird-occupancy/data/'
-outputDir <- 'G://My Drive/projects/songbird-occupancy/results/'
+##
+dataDir <- paste0(PROJECT_DIRECTORY,'/data/')
+outputDir <- paste0(PROJECT_DIRECTORY,'/results/')
 
 # import GIS data
 gisLandak <- import(paste0(dataDir,"landakPoints.csv"))
@@ -115,17 +115,52 @@ gis.cov <- gis.cov[order(gis.cov$OBJECTID_1),] # order matches order of other co
 # add gis cov to unit cov
 unit.cov.full[,c((length(unit.cov.full)+1):(length(unit.cov.full)+length(gis.cov)-6))] <- gis.cov[,-c(1:6)]
 export(unit.cov.full,paste0(outputDir,"data/siteCov/original/unit.cov.full.csv"))
-# remove scales, leaving just 100 and 500m
-unit.cov <- unit.cov.full[,-c(grep(x = colnames(unit.cov.full),
-                                   pattern = '(1000)|(1500)'))]
-unit.cov <- unit.cov[,-c(1,2)]
-export(unit.cov,paste0(outputDir,'data/siteCov/original/site.cov.csv'))
+
+# trim to final columns: elevation, understory, NDVI + scales, water, %intact
+# forest + scales, % canopy cover + scales.
+var.keep <- c('understoryComplexity',
+              'water',
+              'Elevation_100mMEAN',
+              'Canopy_Height_100mMEAN',
+              'Canopy_Height_500mMEAN',
+              'Eucdist_Roads_km_100MEAN',
+              'PercentIntactforest20161000m',
+              'PercentIntactforest2016100m',
+              'PercentIntactforest20161500m',
+              'PercentIntactforest2016500m',
+              'Zonal_Stats100mMEAN',
+              'Zonal_Stats500mMEAN',
+              'Disturbed_Canopy_100mPercent',
+              'Disturbed_Canopy_500mPercent')
+unit.cov <- unit.cov.full[,which(names(unit.cov.full) %in% var.keep)]
+
+names(unit.cov) <- c('und',
+                     'water',
+                     'ele',
+                     'height100',
+                     'height500',
+                     'disturb100',
+                     'disturb500',
+                     'distRoad',
+                     'forest100',
+                     'forest1500',
+                     'forest500',
+                     'forest1000',
+                     'ndvi100',
+                     'ndvi500')
+
+
+# # remove some columns DON'T RUN THIS
+# unit.cov <- unit.cov.full[,-c(grep(x = colnames(unit.cov.full),
+#                                    pattern = '(1000)|(1500)'))]
+
+export(unit.cov,paste0(INPUT_DIRECTORY,'/siteCov/original/site.cov.csv'))
 
 
 # scale covariates to 0-1
 unit.cov.scaled <- as.data.frame(apply(unit.cov,2,rescale))
 
 
-export(unit.cov.scaled,paste0(outputDir,"data/siteCov/original/site.cov.scaled.csv"))
+export(unit.cov.scaled,paste0(INPUT_DIRECTORY,"/siteCov/original/site.cov.scaled.csv"))
 
 
