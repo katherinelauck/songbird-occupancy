@@ -583,3 +583,124 @@ exportFitted <- function(run.models,destination,spp.name,focus.param){
     #,cl = cl
   )
 }
+
+# access parameter estimates
+extract.model.averages <- function(path) {
+  ### Extract model averages from aic tables stored as .rds objects. To avoid 
+  ### overtaxing the memory used by RStudio, files processed in a sequential 
+  ### manner, with each rds object imported, processed, then deleted.
+  
+  psi.avg <- 
+    path %>% 
+    readRDS %>%
+    modAvg(param = 'psi')
+  gc()
+  return(psi.avg)
+  
+}
+
+# access beta values
+extract.beta <- function(path) {
+  ### Extract beta from aic tables stored as .rds objects. To avoid 
+  ### overtaxing the memory used by RStudio, files processed in a sequential 
+  ### manner, with each rds object imported, processed, then deleted.
+  
+  rds <- 
+    path %>% 
+    readRDS
+  beta <- lapply(rds$models,FUN = coef,param = 'psi')
+  gc()
+  return(beta)
+  
+}
+
+extract.psi.est <- function(path) {
+  ### Extract mean & sd of site-specific estimated psi from aic tables stored as
+  ### .rds objects. To avoid overtaxing the memory used by RStudio, files 
+  ### processed in a sequential manner, with each rds object imported, 
+  ### processed, then deleted.
+  
+  rds <- 
+    path %>% 
+    readRDS;
+  psi.est <- lapply(rds$models,FUN = fitted,param = 'psi');
+  avg.psi <- sapply(psi.est,
+                    function(x) return(c(mean(x$est),
+                                         sd(x$est)
+                                         )
+                                       )
+                    )
+  gc()
+  return(avg.psi)
+  
+}
+
+extract.m <- function(i,data,index,color = 1){
+  #### Add lines to plot intended to show how traded and non-traded spp differ 
+  #### in their response to tree height and road distance.
+  # model regression
+  reg <- lm(data[[i]][index[[i]],1]~seq(from = 0, to = 1, length.out = 30))
+  return(c(reg$coefficients[2],color[[i]]))
+}
+
+plot.one.spp <- function(i,index,cov,color = 1){
+  #### Add lines to plot intended to show how traded and non-traded spp differ 
+  #### in their response to tree height and road distance.
+  # model regression
+  reg <- lm(psi.mod.avg[[i]][index[[i]],1]~seq(from = 0, to = 1, length.out = 30))
+  new.psi <- psi.mod.avg[[i]][index[[i]],1]
+  plot(new.psi~cov,col = color[[i]],type = 'b',xlim = c(min(cov),max(cov)),
+       ylim = c(0,1), xlab = paste0('m = ',reg$coefficients[2]),
+       main = paste0(names(psi.mod.avg)[i]))
+}
+
+# add lines to plot
+add.spp.to.plot <- function(i,index,cov,color = 1){
+  #### Add lines to plot intended to show how traded and non-traded spp differ 
+  #### in their response to tree height and road distance.
+  # model regression
+  reg <- lm(psi.mod.avg[[i]][index[[i]],1]~seq(from = 0, to = 1, length.out = 30))
+  new.psi <- psi.mod.avg[[i]][index[[i]],1]-reg$coefficients[1]
+  lines(new.psi~cov,col = color[[i]])
+}
+
+# make model tables per species
+model.tables <- function(x,tables,type,aic.tables = NULL,psi.est = NULL){
+  out <- paste0(PROJECT_DIRECTORY,'/results/graphics/',type)
+  dir.create(out)
+  if(type == 'aic'){
+  stargazer(tables[[x]][which(tables[[x]]$DAIC <= 3),],
+            type = 'html',
+            out = paste0(out,'/',x,'.doc'),
+            summary = F)
+  } else if(type == 'beta'){
+    # extract one set of betas
+    temp <- tables[[x]][which(aic.tables[[x]]$DAIC <= 3)]
+    # extract AIC-relevant set of est psi
+    psi <- psi.est[[x]][,which(aic.tables[[x]]$DAIC <= 3)]
+    # set up model name and beta value columns
+    table <- cbind(Model = aic.tables[[x]]$Model[which(aic.tables[[x]]$DAIC <= 3)],
+                   Psi = apply(psi,1,function(x) tryCatch(paste0(x[1],' \U00B1 ',x[2]),
+                                                          finally = return('NA'))),
+                   matrix(ncol = length(unique(unlist(sapply(temp,FUN = rownames))))-1,
+                          nrow = length(temp),
+                          dimnames = list(NULL,unique(unlist(sapply(temp,FUN = rownames)))[-1])),
+                   deparse.level = 0)
+    # transfer values from temp to table, where each beta value is written as mean +/- se
+    for(i in seq(length(temp))){
+      # transfer the mean & se to the correct cell of the table
+      for(j in rownames(temp[[i]])[-1]){
+        table[i,which(j == colnames(table))] <- 
+          paste(round(temp[[i]][j,1],digits = 2),
+                ' \U00B1 ',
+                round(temp[[i]][j,2],digits = 2))
+      }
+    }
+    
+    stargazer(table,
+              type = 'html',
+              out = paste0(out,'/',x,'.doc'),
+              summary = F)
+  }
+}
+

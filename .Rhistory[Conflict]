@@ -1,0 +1,512 @@
+' \\pm{} ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+stargazer(test,
+type = 'html',
+out = paste0('./results/',names[1],'.doc'),
+summary = F)
+stargazer(test,
+type = 'html',
+out = paste0('./results/',names[1],'.doc'),
+summary = F)
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+' \\\pm ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+' ','\\','\\pm ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+stargazer(test,
+type = 'html',
+out = paste0('./results/',names[1],'.doc'),
+summary = F)
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+' ','\\','\\','\\pm ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+View(test)
+stargazer(test,
+type = 'html',
+out = paste0('./results/',names[1],'.doc'),
+summary = F)
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+' ','\\','\\pm ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+stargazer(test,
+type = 'html',
+out = paste0('./results/',names[1],'.doc'),
+summary = F)
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+' \\pm ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+stargazer(test,
+type = 'html',
+out = paste0('./results/',names[1],'.doc'),
+summary = F)
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+' \<\&plusmn\;\> ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+' <\&plusmn\;> ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+' <&plusmn\;> ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+' <&plusmn;> ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+View(test)
+stargazer(test,
+type = 'html',
+out = paste0('./results/',names[1],'.doc'),
+summary = F)
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+' &plusmn; ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+stargazer(test,
+type = 'html',
+out = paste0('./results/',names[1],'.doc'),
+summary = F)
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+' \&plusmn; ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+' \\&plusmn; ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+stargazer(test,
+type = 'html',
+out = paste0('./results/',names[1],'.doc'),
+summary = F)
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+' &#plusmn; ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+View(test)
+stargazer(test,
+type = 'html',
+out = paste0('./results/',names[1],'.doc'),
+summary = F)
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+\\u+00B1,
+round(table[[i]][j,2],digits = 2))
+}
+}
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+' ',\U+00B1,' ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+' ',\\U+00B1,' ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+' ',\\U+00B1,' ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+' ',\u\+00B1,' ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+' ',\u00B1,' ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+' ',\u00b1,' ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+' ',\\u00b1,' ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+\u00b1
+print(\u00b1)
+print(\\u00b1)
+"\U00B1"
+for(i in seq(length(table))){
+# transfer the mean & se to the correct cell of the table
+for(j in rownames(table[[i]])[-1]){
+test[i,which(j == colnames(test))] <-
+paste(round(table[[i]][j,1],digits = 2),
+' \U00B1 ',
+round(table[[i]][j,2],digits = 2))
+}
+}
+View(test)
+stargazer(test,
+type = 'html',
+out = paste0('./results/',names[1],'.doc'),
+summary = F)
+stargazer(test,
+type = 'html',
+out = paste0('./results/',names[1],'.doc'),
+summary = F)
+source('~/Documents/songbird-occupancy/src/functions.R')
+source('~/Documents/songbird-occupancy/src/functions.R')
+source('~/Documents/songbird-occupancy/src/functions.R')
+lapply(names,
+model.tables,
+tables = psi.beta,
+type = "beta")
+lapply(names,
+model.tables,
+tables = psi.beta,
+type = "beta")
+lapply(names[1],
+model.tables,
+tables = psi.beta,
+type = "beta")
+length(unique(unlist(sapply(table,FUN = rownames))))
+lapply(names,
+model.tables,
+tables = global.aic.tables,
+type = "aic")
+names(psi.beta) <- names
+lapply(names[1],
+model.tables,
+tables = psi.beta,
+type = "beta")
+lapply(names[1:3],
+model.tables,
+tables = psi.beta,
+type = "beta")
+lapply(names[1],
+model.tables,
+tables = psi.beta,
+type = "beta")
+lapply(names[1],
+model.tables,
+tables = psi.beta,
+aic.tables = global.aic.tables,
+type = "beta")
+lapply(names,
+model.tables,
+tables = psi.beta,
+aic.tables = global.aic.tables,
+type = "beta")
+source('~/Documents/songbird-occupancy/src/functions.R')
+source('~/Documents/songbird-occupancy/src/functions.R')
+source('~/Documents/songbird-occupancy/src/functions.R')
+source('~/Documents/songbird-occupancy/src/functions.R')
+source('~/Documents/songbird-occupancy/src/functions.R')
+View(aic.table)
+View(global.aic.tables)
+View(table)
+View(aic.table)
+View(table)
+View(psi.beta)
+View(global.aic.tables)
+temp <- readRDS(global.aic.files[1])
+temp <- readRDS(global.rds.files[1])
+View(temp)
+source('~/Documents/songbird-occupancy/src/functions.R')
+View(makeFilenameVector)
+View(extract.psi)
+View(extract.psi)
+View(extract.psi)
+View(extract.psi)
+est.psi <- lapply(global.rds.files,
+extract.psi.est)
+View(est.psi)
+View(est.psi)
+source('~/Documents/songbird-occupancy/src/functions.R')
+est.psi <- lapply(global.rds.files,
+extract.psi.est)
+source('~/Documents/songbird-occupancy/src/functions.R')
+est.psi <- lapply(global.rds.files,
+extract.psi.est)
+source('~/Documents/songbird-occupancy/src/functions.R')
+View(est.psi)
+est.psi[[1]][[1]]
+source('~/Documents/songbird-occupancy/src/functions.R')
+est.psi <- lapply(global.rds.files,
+extract.psi.est)
+source('~/Documents/songbird-occupancy/src/functions.R')
+est.psi <- lapply(global.rds.files,
+extract.psi.est)
+est.psi[[1]][[1]]
+est.psi <- lapply(global.rds.files,
+extract.psi.est)
+source('~/Documents/songbird-occupancy/src/functions.R')
+est.psi <- lapply(global.rds.files,
+extract.psi.est)
+source('~/Documents/songbird-occupancy/src/functions.R')
+est.psi <- lapply(global.rds.files,
+extract.psi.est)
+View(temp)
+source('~/Documents/songbird-occupancy/src/functions.R')
+est.psi <- lapply(global.rds.files,
+extract.psi.est)
+View(est.psi)
+est.psi[[1]][[1]]
+est.psi[[1]][[1]][,'est']
+mean(est.psi[[1]][[1]][,'est'])
+mean(est.psi[[1]][[1]]$est)
+test.est <- lapply(est.psi,
+function(x) sapply(x,
+function(y) return(c(mean(y[,"est"]),
+sd(y[,"est"])
+)
+)
+)
+)
+View(test.est)
+test.est[[1]]
+test.est <- lapply(est.psi,
+function(x) sapply(x,
+function(y) return(c(mean(y$est),
+sd(y$est)
+)
+)
+)
+)
+View(test.est)
+source('~/Documents/songbird-occupancy/src/functions.R')
+est.psi <- lapply(global.rds.files,
+extract.psi.est)
+source('~/Documents/songbird-occupancy/src/functions.R')
+est.psi <- lapply(global.rds.files,
+extract.psi.est)
+source('~/Documents/songbird-occupancy/src/functions.R')
+est.psi <- lapply(global.rds.files,
+extract.psi.est)
+test.est <- lapply(est.psi,
+function(x) sapply(x,
+function(y) return(c(mean(y$est),
+sd(y$est)
+)
+)
+)
+)
+View(test.est)
+avg.psi <- lapply(est.psi,
+function(x) sapply(x,
+function(y) return(c(mean(y$est),
+sd(y$est)
+)
+)
+)
+)
+source('~/Documents/songbird-occupancy/src/functions.R')
+est.psi <- lapply(global.rds.files,
+extract.psi.est)
+source('~/Documents/songbird-occupancy/src/functions.R')
+est.psi <- lapply(global.rds.files,
+extract.psi.est)
+source('~/Documents/songbird-occupancy/src/functions.R')
+est.psi <- lapply(global.rds.files,
+extract.psi.est)
+source('~/Documents/songbird-occupancy/src/functions.R')
+est.psi <- lapply(global.rds.files,
+extract.psi.est)
+source('~/Documents/songbird-occupancy/src/functions.R')
+est.psi <- lapply(global.rds.files,
+extract.psi.est)
+View(est.psi)
+source('~/Documents/songbird-occupancy/src/functions.R')
+est.psi <- lapply(global.rds.files,
+extract.psi.est)
+View(est.psi)
+names(psi.beta) <- names
+names(est.psi) <- names
+View(est.psi)
+est.psi[["Psilopogon chrysopogon"]]
+est.psi[["Irena puella"]]
+est.psi[["Loriculus galgulus"]]
+est.psi[["Pycnonotus erythropthalmos"]]
+est.psi[["Chloropsis sonnerati"]]
+source('~/Documents/songbird-occupancy/src/functions.R')
+lapply(names,
+model.tables,
+tables = psi.beta,
+aic.tables = global.aic.tables,
+psi.est = est.psi,
+type = "beta")
+View(est.psi)
+source('~/Documents/songbird-occupancy/src/functions.R')
+lapply(names,
+model.tables,
+tables = psi.beta,
+aic.tables = global.aic.tables,
+psi.est = est.psi,
+type = "beta")
+View(est.psi)
+est.psi[["Lalage fimbriata"]]
+source('~/Documents/songbird-occupancy/src/functions.R')
+est.psi <- lapply(global.rds.files,
+extract.psi.est)
+source("C:/Users/kathe/Documents/songbird-occupancy/src/SETTINGS.R")
+source(paste0(PROJECT_DIRECTORY,"/src/functions.R"))
+install.packages(c("backports", "BMA", "callr", "car", "carData", "clipr", "curl", "data.table", "devtools", "digest", "doParallel", "dplyr", "DT", "ellipsis", "foreach", "future", "ggplot2", "ggpubr", "ggsignif", "git2r", "haven", "hms", "httr", "iterators", "knitr", "maptools", "mime", "openssl", "openxlsx", "pbapply", "pillar", "pkgbuild", "pkgconfig", "processx", "purrr", "quantreg", "R6", "Rcpp", "RcppEigen", "remotes", "rjags", "rmarkdown", "scales", "sp", "sys", "tibble", "tidyr", "tinytex", "unmarked", "usethis", "vctrs", "whisker", "xfun", "zip"))
+install.packages("pandocfilters")
+library(pandocfilters)
+install.packages(c("abind", "ape", "reshape2"))
+install.packages(c("chron", "gstat", "lme4", "picante", "raster"))
+library(reshape2)
+library(rjags)
+library(R2jags)
+install.packages(c("R2jags", "rjags"))
+library(reshape2)
+library(rjags)
+library(R2jags)
+source('src/make_array.R')
+# Dependencies
+source('src/jags/data.R')
+install.packages('R2jags')
+# Dependencies
+source('src/jags/data.R')
+data <- make.array() # build dataset
+# Dependencies
+library(reshape2)
+library(rjags)
+library(R2jags)
+library(scales)
+source('src/jags/myfunctions.R')
+df = read.csv('results/data/pointCountMaster.csv')
+df <- df[-c(which(df$species == ""),which(df$species == "unk")),]# remove empty row and unk records
+XX<-acast(df, point ~ species ~ occasion, sum) # create array
+survey.cov <- read.csv('results/data/surveyCov/original/survey.cov.scaled.csv')# read in survey covariates
+site.cov <- read.csv('results/data/siteCov/original/site.cov.scaled.csv')# read in site covariates
+site <- read.csv("results/data/point.dummy.csv")[1:115] # read in sitenames for dimname of arrays and filter out dummy points
+my.array <- function(data,type){ # array creation function to avoid repetition of code. type = "survey", "site", or "species".
+if(type == "survey") {
+dim = c(length(site),5)
+dimnames = list(
+site = site,
+occasion = seq(1,5)
+)
+} else if(type == "site") {
+dim = c(length(site))
+dimnames = list(site = site)
+} else if(type == "species") {
+dim = c(length(dimnames(XX)[[2]]))
+dimnames = list(species = dimnames(XX)[[2]])
+}
+d <- array(
+data,
+dim = dim,
+dimnames = dimnames
+)
+return(d)
+}
+obs.raw <- survey.cov$observer1 # select and name 'obs'
+obs.raw <- array(survey.cov$observer1) # select and name 'obs'
+obs.raw[obs.raw == 'Indah'] <- 1
+obs.raw[obs.raw == 'Katie'] <- 2 # change names to numbers. Indah = 1, Katie = 2. Eventually should scale these. Q9
+obs.raw[obs.raw == ''] <- NA # indicate missing information
+obs <- my.array(rescale(as.numeric(obs.raw)),'survey') # scale obs

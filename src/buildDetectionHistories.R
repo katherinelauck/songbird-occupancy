@@ -9,8 +9,8 @@
 require('rio')
 
 # Data directory
-dataDir <- paste0(PROJECT_DIRECTORY,'/data/pointCount')
-outputDir <- paste0(PROJECT_DIRECTORY,"/results")
+dataDir <- paste0('data/pointCount')
+outputDir <- paste0("results")
 
 
 # List files
@@ -26,6 +26,7 @@ data <- grep("(TT)(.)*(?!proofed|proof)(\\w)*\\.xlsx"
              ,ignore.case = TRUE
              ,value = TRUE
              )
+             
 
 # Combine into single dataframe
 # cl = makeCluster(detectCores()-1)

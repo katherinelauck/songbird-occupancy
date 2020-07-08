@@ -1,6 +1,6 @@
 ##### Test parallel processing on at the subroutine inside runModelSet
 # Author: Katherine Lauck
-# Last updated: 12 November 2018
+# Last updated: 23 July 2019
 #
 # To use this script, run occModInputs.R, which creates
 # the source occupancy data for the analyses carried out by this script.
@@ -12,8 +12,8 @@
 
 # Initialization
 
-source("C:/Users/kathe/Documents/songbird-occupancy/src/SETTINGS.R")
-source(paste0(PROJECT_DIRECTORY,"/src/functions.R"))
+source("src/SETTINGS.R")
+source("src/functions.R")
 
 # If desired, you can recreate the input from scratch:
 #source('src/occModInputs.R')
@@ -306,6 +306,7 @@ global.aic.files <- list.files(path = paste0(OUTPUT_DIRECTORY,"/anthro"),
 )
 global.aic.tables <- lapply(global.aic.files,
                              import)
+# export aic tables of 
 
 # capture global model for each sp 
 global.psi.models <- lapply(global.aic.tables,
@@ -338,14 +339,18 @@ global.psi.cov <- lapply(global.psi.models,
 #             global.psi = global.psi.cov)
 
 # THE BIG ONE (maybe???)
-unlink(paste0(OUTPUT_DIRECTORY,'/global'),recursive = T) # remove previous fill
-dir.create(paste0(OUTPUT_DIRECTORY,'/global'))  # create directory
-foreach(i=iter(occ.data)) %do%
-  runModelSet(i,
-              destination = paste0(OUTPUT_DIRECTORY,'/global'),
-              site.cov = site.cov.dummy,
-              survey.cov = survey.cov.dummy,
-              point.names = unlist(point.dummy,use.names = F),
-              focus.param = 'psi',
-              p.model = p.form,
-              global.psi = global.psi.cov)
+# unlink(paste0(OUTPUT_DIRECTORY,'/global'),recursive = T) # remove previous fill
+# dir.create(paste0(OUTPUT_DIRECTORY,'/global'))  # create directory
+# foreach(i=iter(occ.data)) %do%
+#   runModelSet(i,
+#               destination = paste0(OUTPUT_DIRECTORY,'/global'),
+#               site.cov = site.cov.dummy,
+#               survey.cov = survey.cov.dummy,
+#               point.names = unlist(point.dummy,use.names = F),
+#               focus.param = 'psi',
+#               p.model = p.form,
+#               global.psi = global.psi.cov)
+
+
+
+

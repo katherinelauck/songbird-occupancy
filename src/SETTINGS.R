@@ -40,6 +40,12 @@ require('tidyr')
 require('stringr')
 require('foreach')
 require('doParallel')
+#install.packages('car')
+require('car')
+#install.packages('ggpubr')
+require('ggpubr')
+#install.packages('stargazer')
+require('stargazer')
 
 # choose from 2 options for DATASET.
 # "dummy": includes 120 dummy points and dummy site covariate values, as well as
@@ -48,15 +54,15 @@ require('doParallel')
 
 DATASET <- "dummy"
 
-PROJECT_DIRECTORY <- 'C:/Users/kathe/Documents/songbird-occupancy'
+PROJECT_DIRECTORY <- getwd()
 
 # Choose where the input is. This should correspond to a project directory containing
 # a data/ directory and a results/ directory.
-INPUT_DIRECTORY <- 'C:/Users/kathe/Documents/songbird-occupancy/results/data'
+INPUT_DIRECTORY <- paste0(PROJECT_DIRECTORY,'/results/data')
 
 # Choose where the output should be stored.
 #OUTPUT_DIRECTORY <- "G:/My Drive/projects/songbird-occupancy/results/presenceOutput"
-OUTPUT_DIRECTORY <- "C:/Users/kathe/Documents/songbird-occupancy/results/presenceOutput"
+OUTPUT_DIRECTORY <- paste0(PROJECT_DIRECTORY,"/results/presenceOutput")
 
 # choose which spp are analyzed. Two options are available.
 # NAMES_ENOUGH_DATA : a list of spp that probably have enough data, or almost

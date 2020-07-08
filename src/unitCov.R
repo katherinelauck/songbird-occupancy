@@ -4,8 +4,15 @@
 #
 ##
 ##
-dataDir <- paste0(PROJECT_DIRECTORY,'/data/')
-outputDir <- paste0(PROJECT_DIRECTORY,'/results/')
+# Dependencies
+library('rio')
+source('src/functions.R')
+library('rlang')
+library('tidyverse')
+library(scales)
+
+dataDir <- 'data/'
+outputDir <- 'results/'
 
 # import GIS data
 gisLandak <- import(paste0(dataDir,"landakPoints.csv"))
@@ -14,7 +21,7 @@ gisLandak$lat <- as.numeric(gisLandak$lat)
 
 # Import YPI data
 mhYPI.file <- list.files(paste0(dataDir,"siteCov/microhabitat"),
-                         full.names = TRUE)
+                         full.names = TRUE)[-1]
 
 # Combine into single dataframe
 mhYPI <- NULL
@@ -142,10 +149,10 @@ names(unit.cov) <- c('und',
                      'disturb100',
                      'disturb500',
                      'distRoad',
+                     'forest1000',
                      'forest100',
                      'forest1500',
                      'forest500',
-                     'forest1000',
                      'ndvi100',
                      'ndvi500')
 
@@ -154,13 +161,13 @@ names(unit.cov) <- c('und',
 # unit.cov <- unit.cov.full[,-c(grep(x = colnames(unit.cov.full),
 #                                    pattern = '(1000)|(1500)'))]
 
-export(unit.cov,paste0(INPUT_DIRECTORY,'/siteCov/original/site.cov.csv'))
+export(unit.cov,'results/data/siteCov/original/site.cov.csv')
 
 
 # scale covariates to 0-1
 unit.cov.scaled <- as.data.frame(apply(unit.cov,2,rescale))
 
 
-export(unit.cov.scaled,paste0(INPUT_DIRECTORY,"/siteCov/original/site.cov.scaled.csv"))
+export(unit.cov.scaled,'results/data/siteCov/original/site.cov.scaled.csv')
 
 
