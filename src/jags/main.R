@@ -17,12 +17,12 @@ data$X[data$X>0] <- 1 # change to presence/absence
 
 # 2. Reduce problem for bug test
 
-# Subset down to the most common X species
-spp.sub.num <- 5 # set subset
-spp.use <- names(rev(apply(data$X, 2, sum)[order(apply(data$X, 2, sum))]))[1:spp.sub.num] # list sp to use
-data$nsp <- spp.sub.num # set nsp
-data$X <- data$X[,spp.use,] # subset X
-data$commercial <- data$commercial[spp.use] # subset commercial
+# # Subset down to the most common X species
+# spp.sub.num <- 5 # set subset
+# spp.use <- names(rev(apply(data$X, 2, sum)[order(apply(data$X, 2, sum))]))[1:spp.sub.num] # list sp to use
+# data$nsp <- spp.sub.num # set nsp
+# data$X <- data$X[,spp.use,] # subset X
+# data$commercial <- data$commercial[spp.use] # subset commercial
 
 # # Subset to sites with complete visit information
 # site.use <- names(which(rowSums(is.na(data$obs),1) == 0)) # Identify sites to remove by returning sites with NA in their row of obs
@@ -37,20 +37,27 @@ data$commercial <- data$commercial[spp.use] # subset commercial
 # data$dist.cano <- data$dist.cano[site.use]
 # data$transect <- data$transect[site.use]
 
-# 3. Run ms.ms
+# 3. Exclude spp with <10 detections
+
+spp.use <- names(apply(data$X, 2, sum)[which(apply(data$X, 2, sum)>9)]) # list sp to use
+data$nsp <- length(spp.use) # set nsp
+data$X <- data$X[,spp.use,] # subset X
+data$commercial <- data$commercial[spp.use] # subset commercial
+
+# 4. Run ms.ms
 source('src/jags/ssom_2018_Vintf.R') # load jags model
 dd<-list(data=data) # wrap data in list
-times<-system.time(res<-ms.ms(dd, 100000, 20, 20000, 4));save(res, dd, times, file='results/jags/ssom_2018_Vintf.rdata') # run and then save results
+times<-system.time(res<-ms.ms(dd, 100000, 200, 30000, 4));save(res, dd, times, file='results/jags/ssom_2018_Vintf.rdata') # run and then save results
 
 source('src/jags/ssom_2018_Vdc.R') # load jags model
 dd<-list(data=data) # wrap data in list
-times<-system.time(res<-ms.ms(dd, 100000, 20, 20000, 4));save(res, dd, times, file='results/jags/ssom_2018_Vdc.rdata') # run and then save results
+times<-system.time(res<-ms.ms(dd, 100000, 200, 30000, 4));save(res, dd, times, file='results/jags/ssom_2018_Vdc.rdata') # run and then save results
 
 source('src/jags/ssom_2018_Vintf.R') # load jags model
 dd<-list(data=data) # wrap data in list
 times<-system.time(res<-ms.ms(dd, 50000, 20, 20000, 4));save(res, dd, times, file='results/jags/ssom_2018_Vintf_short.rdata') # run and then save results
 
-# 4. Evaluate results
+# 5. Evaluate results
 
 load("results/jags/ssom_2018_Vintf_short.rdata")
 load("results/jags/ssom_2018_Vintf.rdata")

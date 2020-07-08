@@ -4,16 +4,7 @@
 #### Last updated: 27 May 2020
 
 ## Questions
-## 4. Did I interpret site random effects correctly?
-## 7. Equivalent to line 202 in MSOM_2019_V0.1.R. How to implement this if there's no iterator for the transects?
-## 8. How do you keep track of missed visits? The method used to build the array does not distinguish between a missed visit and a nondetection
 ## 9. Should I find market prices to replace 0-1 commercial vector?
-
-# To-do
-# - Ask questions of Danny/Luke
-# - check autocor between road and disturbance measures
-# - Refine param to be included
-# - Bug test the rest of the model
 
 ms.ms <- function(d,
                   ni=1100,

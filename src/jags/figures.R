@@ -51,4 +51,5 @@ n.detect <- pc %>%
   summarize(n()) %>%
   arrange(desc(`n()`))
 
+n.detect[which(n.detect$`n()`>9),]
   
