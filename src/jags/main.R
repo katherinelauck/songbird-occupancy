@@ -45,17 +45,21 @@ data$X <- data$X[,spp.use,] # subset X
 data$commercial <- data$commercial[spp.use] # subset commercial
 
 # 4. Run ms.ms
+
+# intact forest
 source('src/jags/ssom_2018_Vintf.R') # load jags model
 dd<-list(data=data) # wrap data in list
-times<-system.time(res<-ms.ms(dd, 100000, 200, 30000, 4));save(res, dd, times, file='results/jags/ssom_2018_Vintf.rdata') # run and then save results
+times<-system.time(res<-ms.ms(dd, 100000, 200, 30000, 4));save(res, dd, times, file='results/jags/ssom_2018_Vintf_2020-08-26.rdata') # run and then save results
 
-source('src/jags/ssom_2018_Vdc.R') # load jags model
-dd<-list(data=data) # wrap data in list
-times<-system.time(res<-ms.ms(dd, 100000, 200, 30000, 4));save(res, dd, times, file='results/jags/ssom_2018_Vdc.rdata') # run and then save results
+# # % disturbed canopy
+# source('src/jags/ssom_2018_Vdc.R') # load jags model
+# dd<-list(data=data) # wrap data in list
+# times<-system.time(res<-ms.ms(dd, 100000, 200, 30000, 4));save(res, dd, times, file='results/jags/ssom_2018_Vdc.rdata') # run and then save results
 
-source('src/jags/ssom_2018_Vintf.R') # load jags model
-dd<-list(data=data) # wrap data in list
-times<-system.time(res<-ms.ms(dd, 50000, 20, 20000, 4));save(res, dd, times, file='results/jags/ssom_2018_Vintf_short.rdata') # run and then save results
+# # bug test
+# source('src/jags/ssom_2018_Vintf.R') # load jags model
+# dd<-list(data=data) # wrap data in list
+# times<-system.time(res<-ms.ms(dd, 5000, 5, 2500, 4))#; save(res, dd, times, file='results/jags/ssom_2018_Vintf_short.rdata') # run and then save results
 
 # 5. Evaluate results
 
@@ -69,6 +73,6 @@ summ<-res$BUGSoutput$summary
 
 vars<-rownames(summ)
 
-summ[grep("Z", vars),cols]
+summ[grep("mu", vars),cols]
 
 R2jags::traceplot(res$BUGSoutput,varname = grep('mu',vars,value = T))

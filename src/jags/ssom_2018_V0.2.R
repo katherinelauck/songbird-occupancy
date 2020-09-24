@@ -1,7 +1,7 @@
 #### Single-season occupancy model using 2018 data collected by PII in Cagar Alam Gunung Nyiut
 #### Author: Katherine Lauck
 #### Email: kslauck@ucdavis.edu
-#### Last updated: 27 May 2020
+#### Last updated: 26 August 2020
 #### 
 #### This version uses %intact forest (intf) as an inverse disturbance measure.
 
@@ -60,21 +60,21 @@ ms.ms <- function(d,
     
     for (sp in 1:nsp){	    
       for (site in 1:nsite){	
-          for (rep in 1:5){
-            logit(p[site, sp, rep]) <- 
-              # Random effects
-              p.site[site] +
-              p.sp[sp] +
-              # p.rep[site,rep] +
-              p.obs*obs[site,rep] + # should observer have a per sp effect? See Q2
-              # p.date[sp]*date[site,rep] +
-              # Fixed effects
-              p.time*time[site,rep]
-              # p.cloud*cloud[site,rep]
-            
-            
-            p.eff[site,sp,rep] <- p[site,sp,rep]*visited[site,rep] # see Q1
-          } #/rep
+        for (rep in 1:5){
+          logit(p[site, sp, rep]) <- 
+            # Random effects
+            p.site[site] +
+            p.sp[sp] +
+            # p.rep[site,rep] +
+            p.obs*obs[site,rep] + # should observer have a per sp effect? See Q2
+            # p.date[sp]*date[site,rep] +
+            # Fixed effects
+            p.time*time[site,rep]
+          # p.cloud*cloud[site,rep]
+          
+          
+          p.eff[site,sp,rep] <- p[site,sp,rep]*visited[site,rep] # see Q1
+        } #/rep
       } #/site
     } #/sp
     
@@ -154,7 +154,7 @@ ms.ms <- function(d,
     mu.lambda.ch ~ dnorm(0, 0.01)
     sigma.lambda.ch ~ dunif(0.001,10)
     tau.lambda.ch <- 1/(sigma.lambda.ch*sigma.lambda.ch)
-
+    
     mu.lambda.intf ~ dnorm(0, 0.01)
     sigma.lambda.intf ~ dunif(0.001,10)
     tau.lambda.intf <- 1/(sigma.lambda.intf*sigma.lambda.intf)
@@ -218,45 +218,45 @@ ms.ms <- function(d,
     
     for (sp in 1:nsp){
       for(site in 1:nsite) {
-          logit(psi[site,sp]) <- 
-            # Random effects
-            lambda.0[sp] + # each sp has a different base occupancy (some are rare)
-            # lambda.site.sp[site,sp] + # each sp has a different base occ at each site (maybe don't include? Since this is such a small area? see Q3)
-            lambda.site[site] + # each site has residual quality differences that are unexplained by microhabitat variables (see Q4)
-            lambda.transect[transect[site]] + # spatial autocorrelation random effect Q7
-            # lambda.us[sp]*us[site] + # each sp has a different relationship to understory
-            lambda.water[sp]*water[site] + # each sp has a different relationship to water
-            # lambda.grass[sp]*grass[site] + # each sp has a different relationship to grass
-            # lambda.shrubs[sp]*shrubs[site] + # each sp has a different relationship to shrubs
-            # lambda.tf[sp]*tf[site] + # each sp has a different relationship to treefall
-            # lambda.ele[sp]*ele[site] + # each sp has a different relationship to elevation
-            # lambda.slope[sp]*slope[site] + # each sp has a different relationship to slope
-            lambda.ch[sp]*ch[site] + # each sp has a different relationship to canopy height
-
-            lambda.intf[sp]*intf[site] + # each sp has a different relationship to intact forest (500 m)
-            # lambda.nf[sp]*nf[site] + # each sp has a different relationship to nonforest
-            # lambda.rf[sp]*rf[site] + # each sp has a different relationship to regrowth
-            # lambda.ndvi[sp]*ndvi[site] + # each sp has a different relationship to NDVI
-            # lambda.tc[sp]*tc[site] + # each sp has a different relationship to tree cover
-            # Parameters of interest
-            lambda.com*commercial[sp] + # identity as a commercially valuable species has some effect on occupancy
-            
-            lambda.dr[sp]*dist.road[site] +
-            # lambda.dc[sp]*dist.cano[site] +
-            lambda.intf.com[sp]*intf[site]*commercial[sp] + # commercial sp have a different sloped relationship with intact forest than non-commercial sp
-            lambda.dr.com[sp]*dist.road[site]*commercial[sp] # each sp has a different relationship to distance to roads
-            # lambda.dc.com[sp]*dist.cano[site]*commercial[sp] # each sp has a different relationship to disturbed canopy. Should the commercial factor be swapped with a forest preference factor? Also I think I can extract the prices for most of these sp from Rentschlar et al 2018, should I use that instead, and exclude the spp for which I don't have prices? I might also be able to find out market prices for the other ones from contacts from my collaborator. Q9
-            
-            
-          Z[site, sp] ~ dbern(psi[site,sp]) # Bernoulli realization of true occupancy
+        logit(psi[site,sp]) <- 
+          # Random effects
+          lambda.0[sp] + # each sp has a different base occupancy (some are rare)
+          # lambda.site.sp[site,sp] + # each sp has a different base occ at each site (maybe don't include? Since this is such a small area? see Q3)
+          lambda.site[site] + # each site has residual quality differences that are unexplained by microhabitat variables (see Q4)
+          lambda.transect[transect[site]] + # spatial autocorrelation random effect Q7
+          # lambda.us[sp]*us[site] + # each sp has a different relationship to understory
+          lambda.water[sp]*water[site] + # each sp has a different relationship to water
+          # lambda.grass[sp]*grass[site] + # each sp has a different relationship to grass
+          # lambda.shrubs[sp]*shrubs[site] + # each sp has a different relationship to shrubs
+          # lambda.tf[sp]*tf[site] + # each sp has a different relationship to treefall
+          # lambda.ele[sp]*ele[site] + # each sp has a different relationship to elevation
+          # lambda.slope[sp]*slope[site] + # each sp has a different relationship to slope
+          lambda.ch[sp]*ch[site] + # each sp has a different relationship to canopy height
           
-          ## *******************************************************
-          ## Detection process
-          ## *******************************************************
+          lambda.intf[sp]*intf[site] + # each sp has a different relationship to intact forest (500 m)
+          # lambda.nf[sp]*nf[site] + # each sp has a different relationship to nonforest
+          # lambda.rf[sp]*rf[site] + # each sp has a different relationship to regrowth
+          # lambda.ndvi[sp]*ndvi[site] + # each sp has a different relationship to NDVI
+          # lambda.tc[sp]*tc[site] + # each sp has a different relationship to tree cover
+          # Parameters of interest
+          lambda.com*commercial[sp] + # identity as a commercially valuable species has some effect on occupancy
           
-          for(rep in 1:nrep.run[site]) { 
-            X[site,sp,rep] ~ dbern(p.eff[site,sp,rep]*Z[site,sp]) # Given presence, detection
-          } #/rep
+          lambda.dr[sp]*dist.road[site] +
+          # lambda.dc[sp]*dist.cano[site] +
+          lambda.intf.com[sp]*intf[site]*commercial[sp] + # commercial sp have a different sloped relationship with intact forest than non-commercial sp
+          lambda.dr.com[sp]*dist.road[site]*commercial[sp] # each sp has a different relationship to distance to roads
+        # lambda.dc.com[sp]*dist.cano[site]*commercial[sp] # each sp has a different relationship to disturbed canopy. Should the commercial factor be swapped with a forest preference factor? Also I think I can extract the prices for most of these sp from Rentschlar et al 2018, should I use that instead, and exclude the spp for which I don't have prices? I might also be able to find out market prices for the other ones from contacts from my collaborator. Q9
+        
+        
+        Z[site, sp] ~ dbern(psi[site,sp]) # Bernoulli realization of true occupancy
+        
+        ## *******************************************************
+        ## Detection process
+        ## *******************************************************
+        
+        for(rep in 1:nrep.run[site]) { 
+          X[site,sp,rep] ~ dbern(p.eff[site,sp,rep]*Z[site,sp]) # Given presence, detection
+        } #/rep
       } #/site
     } #/sp
     
@@ -267,90 +267,90 @@ ms.ms <- function(d,
     
     
   } #/model
-
-
-## specify the parameters to be monitored
-params <- 
-  c(
-    'Z',
-    'sigma.p.site',
-    'sigma.p.sp',
-    'p.obs',
-    'p.time',
-    'lambda.0',
-    'mu.lambda.0',
-    'sigma.lambda.0',
-    #'lambda.site',
-    'sigma.lambda.site',
-    #'lambda.transect',
-    'sigma.lambda.transect',
-    'lambda.water',
-    'mu.lambda.water',
-    'sigma.lambda.water',
-    # 'lambda.ele',
-    # 'mu.lambda.ele',
-    # 'sigma.lambda.ele',
-    'lambda.com',
-    'lambda.dr',
-    'mu.lambda.dr',
-    'sigma.lambda.dr',
-    # 'lambda.dc',
-    # 'mu.lambda.dc',
-    # 'sigma.lambda.dc',
-    'lambda.dr.com',
-    'mu.lambda.dr.com',
-    'sigma.lambda.dr.com',
-    # 'lambda.dc.com',
-    # 'mu.lambda.dc.com',
-    # 'sigma.lambda.dc.com',
-    'lambda.ch',
-    'mu.lambda.ch',
-    'sigma.lambda.ch',
-    'lambda.intf',
-    'mu.lambda.intf',
-    'sigma.lambda.intf',
-    'lambda.intf.com',
-    'mu.lambda.intf.com',
-    'sigma.lambda.intf.com'
-  )
-
-## Specify initial values
-XX<-d$data$X
-
-my.inits <- function() {
-  list(Z=apply(XX, c(1,2), max)
-  )
-}
-
-
-d$data.use<-d$data[c('X',
-                     'nsp',
-                     'nsite',
-                     'nrep.run',
-                     'obs',
-                     'time',
-                     'ntransect',
-                     'transect',
-                     'water',
-                     # 'ele',
-                     'dist.road',
-                     'dist.cano',
-                     'commercial',
-                     'visited',
-                     'ch',
-                     'intf'
-)]
-
-# attach(d$data)
-
-
-jags.parallel(data=d$data.use,
-              inits= my.inits,
-              parameters.to.save= params,
-              model.file=model.jags,
-              n.chains=nc,
-              n.thin=nt,
-              n.iter=ni,
-              n.burnin=nb,
-              working.directory=NULL)
+  
+  
+  ## specify the parameters to be monitored
+  params <- 
+    c(
+      'Z',
+      'sigma.p.site',
+      'sigma.p.sp',
+      'p.obs',
+      'p.time',
+      'lambda.0',
+      'mu.lambda.0',
+      'sigma.lambda.0',
+      #'lambda.site',
+      'sigma.lambda.site',
+      #'lambda.transect',
+      'sigma.lambda.transect',
+      'lambda.water',
+      'mu.lambda.water',
+      'sigma.lambda.water',
+      # 'lambda.ele',
+      # 'mu.lambda.ele',
+      # 'sigma.lambda.ele',
+      'lambda.com',
+      'lambda.dr',
+      'mu.lambda.dr',
+      'sigma.lambda.dr',
+      # 'lambda.dc',
+      # 'mu.lambda.dc',
+      # 'sigma.lambda.dc',
+      'lambda.dr.com',
+      'mu.lambda.dr.com',
+      'sigma.lambda.dr.com',
+      # 'lambda.dc.com',
+      # 'mu.lambda.dc.com',
+      # 'sigma.lambda.dc.com',
+      'lambda.ch',
+      'mu.lambda.ch',
+      'sigma.lambda.ch',
+      'lambda.intf',
+      'mu.lambda.intf',
+      'sigma.lambda.intf',
+      'lambda.intf.com',
+      'mu.lambda.intf.com',
+      'sigma.lambda.intf.com'
+    )
+  
+  ## Specify initial values
+  XX<-d$data$X
+  
+  my.inits <- function() {
+    list(Z=apply(XX, c(1,2), max)
+    )
+  }
+  
+  
+  d$data.use<-d$data[c('X',
+                       'nsp',
+                       'nsite',
+                       'nrep.run',
+                       'obs',
+                       'time',
+                       'ntransect',
+                       'transect',
+                       'water',
+                       # 'ele',
+                       'dist.road',
+                       'dist.cano',
+                       'commercial',
+                       'visited',
+                       'ch',
+                       'intf'
+  )]
+  
+  # attach(d$data)
+  
+  
+  jags.parallel(data=d$data.use,
+                inits= my.inits,
+                parameters.to.save= params,
+                model.file=model.jags,
+                n.chains=nc,
+                n.thin=nt,
+                n.iter=ni,
+                n.burnin=nb,
+                working.directory=NULL)
 } #/ms.ms
