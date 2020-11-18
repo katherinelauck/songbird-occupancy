@@ -1,0 +1,34 @@
+Title: Hi I’m Katherine Lauck, I’m a second-year PhD student with Dr. Karp. I'm talking about the research I did during my Fulbright in 2017 and 2018.
+
+Map: I worked in Indonesia. Here's a map of the West part of the archipelago. My project was based in the Indonesian part of Borneo, called Kalimantan, this Southeast part of Borneo.
+
+slash and burn: The biggest threat to biodiversity on Borneo is deforestation. This is near one of my field sites - a patch of primary forest slashed and burned for rice agriculture in 2018.
+This map from Global Forest Change shows the enormous amount of forest loss on Borneo just since 2000, and loss is accelerating.
+
+sumatra roads: Roads enable and follow deforestation and provide access to more interior forests that would otherwise be inaccessible. This map of tree cover in Sumatra shows that a large portion of remaining forest in Sumatra is within 5 km of a road - that’s the purple. This pattern holds true in Borneo as well.
+
+Animals: Increased access provided by roads allows people to enter further and further into the forest to hunt and trap animals for a variety of purposes. On the top are animal parts - tiger testicles, crocodile penises, and hornbill heads - used as traditional medicine. Subsistence hunting is also practiced by the indigenous people using the forest where I worked. On the bottom are live birds trapped in the wild for the pet trade in singing birds.
+
+Songbirds: This trade is extensive. 1.2 million songbirds are purchased annually in the 6 largest Javan cities… and this is only a fraction of the trade. These spp are kept for.... In one extreme example of a precipitous decline caused by the bird trade, Straw-headed Bulbul was recently listed as Critically Endangered, but people in our partner villages told me they were common as recently as the 1990s. The SE Asian Songbird Crisis Summit identified 27 other Indonesian taxa as severely threatened by the bird trade, including 6 detected in my survey.
+
+Questions: These recommendations are based primarily on market data. Systematic surveys that connect trapping pressure to wild population declines are lacking. So, I asked: … To test H1, I used distance from road as a proxy for trapping pressure (because trapping pressure is really hard to measure) - as in Harris et al mentioned earlier. To ensure that the effects measured to answer Question 1 were indeed caused by trapping pressure and not habitat degredation near roads, I also asked...... because the community I studied was composed primarily of primary forest birds.
+
+Methods: To answer these questions, I conducted point counts in a nature reserve in Kalimantan, at these 115 sites arrayed along a remoteness gradient, five times each. The purple line indicates the border of the nature reserve, and the red indicates recent forest loss.
+
+Point count results: [read slide]
+
+Analysis: I used a...
+
+Q1 mean: I found that:
+x axis is distance to nearest road, y axis is predicted occupancy probability, and the purple (or dark) line indicates the average species that is not commercially valuable, whereas the green (or light) line indicates the average commercially valuable species.
+while both groups increase in occupancy with distance to road, commercially valuable species are very unlikely to occupy areas near roads. In addition, the probability that they will occupy a location increases with increasing distance to a road very quickly relative to non-valuable species.
+
+Q1 spp: Adding the lines for each species, interestingly, some non-valuable species do decrease in occupancy with distance to road while all valuable species increase in occupancy.
+
+Q2 mean: I also found that: PAUSE
+note that the x axis is now percent intact forest
+again, the predicted occupancy of the average species for both groups increases with increasing percentage of intact forest.
+
+Q2 spp: But adding in the species lines, the distributions are now more overlapping and there is more variation among commercially valuable species.
+
+Conclusions: read slide

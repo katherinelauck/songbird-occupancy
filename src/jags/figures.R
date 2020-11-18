@@ -14,10 +14,11 @@ library(magrittr)
 library(boot)
 library(scales)
 library(gt)
+library(gridExtra)
 
 load("results/jags/ssom_2018_Vintf_2020-08-26.rdata")
 colnames(res$BUGSoutput$summary)
-cols<-c('mean', '2.5%','97.5%','Rhat','n.eff')
+cols<-c('mean', 'sd','2.5%','97.5%','Rhat','n.eff')
 summ<-res$BUGSoutput$summary
 
 vars<-rownames(summ)
@@ -115,22 +116,26 @@ bayes_predict_plot <- function(data, x, save=FALSE){
            low.95 = bayes_predict(data,x,list(x.scaled,commercial),'mu','2.5%'),
            high.95 = bayes_predict(data,x,list(x.scaled,commercial),'mu','97.5%')
     )
+  fig.data.mu$commercial <- factor(fig.data.mu$commercial)
+  levels(fig.data.mu$commercial) <- c('Not commercially valuable','Commercially valuable')
   
   mu_90 <- fig.data.mu %>%
     ggplot(mapping = aes(x = x.unscaled, group = factor(commercial))) +
-    geom_ribbon(aes(ymin = low.90, ymax = high.90,colour = factor(commercial), fill = factor(commercial)),linetype = 2, alpha= 0.1) +
-    geom_line(aes(y = mean, color = factor(commercial))) +
-    theme_classic() +
+    geom_ribbon(aes(ymin = low.90, ymax = high.90,colour = factor(commercial), fill = factor(commercial)),linetype = 2, alpha = .2) +
+    geom_line(aes(y = mean, color = factor(commercial)),size = 1.5) +
+    theme_classic(base_size = 22) +
     labs(x = xlab, y = "Predicted occupancy probability") +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    scale_color_viridis_d(end = .8, aesthetics = c('color','fill'))
   
   mu_95 <- fig.data.mu %>%
     ggplot(mapping = aes(x = x.unscaled, group = factor(commercial))) +
-    geom_ribbon(aes(ymin = low.95, ymax = high.95,colour = factor(commercial), fill = factor(commercial)),linetype = 2, alpha= 0.1) +
-    geom_line(aes(y = mean, color = factor(commercial))) +
-    theme_classic() + 
+    geom_ribbon(aes(ymin = low.95, ymax = high.95,colour = factor(commercial), fill = factor(commercial)),linetype = 2, alpha= 0.2) +
+    geom_line(aes(y = mean, color = factor(commercial)),size = 1.5) +
+    theme_classic(base_size = 22) + 
     labs(x =xlab, y = "Predicted occupancy probability") +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    scale_color_viridis_d(end = .8, aesthetics = c('color','fill'))
   
   ##### 
   # per spp effect
@@ -150,14 +155,33 @@ bayes_predict_plot <- function(data, x, save=FALSE){
   fig.data.sp %<>%
     mutate(x.unscaled = rescale(x.scaled,c(min(predictor),max(predictor))),
            mean = bayes_predict(data,x,list(x.scaled,commercial),type = 'species'))
+  fig.data.sp$commercial <- factor(fig.data.sp$commercial)
+  levels(fig.data.sp$commercial) <- c('Not commercially valuable','Commercially valuable')
   
-  per.sp <- fig.data.sp %>%
+  per.sp.mu <- fig.data.sp %>%
     ggplot(mapping = aes(x = x.unscaled, group = species)) +
-    geom_line(aes(y = mean, color = factor(commercial)), alpha = .6) +
+    coord_cartesian(xlim = c(min(fig.data.sp$x.unscaled,na.rm = TRUE),max(fig.data.sp$x.unscaled,na.rm = TRUE)),
+                    ylim = c(min(fig.data.sp$mean,na.rm = TRUE),max(fig.data.sp$mean,na.rm = TRUE))) +
+    #geom_line(aes(y = mean, color = factor(commercial)), alpha = .2,size = 1.2) +
     geom_line(data = fig.data.mu,aes(y = mean,x = x.unscaled, group = factor(commercial), color = factor(commercial)),size = 2) +
-    theme_classic() +
+    theme_classic(base_size = 22) +
     labs(x =xlab, y = "Predicted occupancy probability") +
-    theme(legend.position = "none")
+    theme(legend.position = "top", legend.title = element_blank()) +
+    #scale_color_discrete(labels = c("Not commercially valuable", "Commercially valuable")) +
+    scale_color_viridis_d(end = .8, aesthetics = c('color','fill')) 
+  
+  per.sp.full <- fig.data.sp %>%
+    ggplot(mapping = aes(x = x.unscaled, group = species)) +
+    coord_cartesian(xlim = c(min(fig.data.sp$x.unscaled,na.rm = TRUE),max(fig.data.sp$x.unscaled,na.rm = TRUE)),
+                    ylim = c(min(fig.data.sp$mean,na.rm = TRUE),max(fig.data.sp$mean,na.rm = TRUE))) +
+    geom_line(aes(y = mean, color = factor(commercial),alpha = factor(commercial)),size = 1.1) +
+    scale_alpha_discrete(range = c(0.1, 0.4)) +
+    geom_line(data = fig.data.mu,aes(y = mean,x = x.unscaled, group = factor(commercial),color = factor(commercial)),size = 2) +
+    theme_classic(base_size = 22) +
+    labs(x =xlab, y = "Predicted occupancy probability") +
+    theme(legend.position = "top",legend.title = element_blank()) +
+    #scale_color_discrete(labels = c("Not commercially valuable", "Commercially valuable")) +
+    scale_color_viridis_d(end = .8, aesthetics = c('color','fill'))
   
   fig.data.bci <- bind_cols(commercial = c(rep(0,1400),rep(1,1400)),
                             est = c(c(data$BUGSoutput$sims.list[[paste0('mu.lambda.',x)]]),
@@ -168,39 +192,71 @@ bayes_predict_plot <- function(data, x, save=FALSE){
     ggplot(mapping = aes(x = factor(commercial), y = est, fill = factor(commercial))) +
     geom_boxplot() +
     scale_x_discrete(labels=c("0" = "Not commercially valuable", "1" = "Commercially valuable")) +
-    theme_classic() +
+    theme_classic(base_size = 22) +
     labs(x = NULL,y = paste0('Estimated effect of ',ylab)) +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    scale_color_viridis_d(end = .8, aesthetics = c('color','fill'))
+  
+  mu <- ddply(fig.data.bci, "commercial", summarise, grp.mean=mean(est))
   
   fig.data.bci2 <- bind_cols(commercial = c(0,1),
                              mean = c(mean(fig.data.bci$est[1:1400]),
                                       mean(fig.data.bci$est[1401:2800])),
-                            ymin = c(quantile(fig.data.bci$est[1:1400],.025),
-                                     quantile(fig.data.bci$est[1401:2800],.025)),
-                            ymax = c(quantile(fig.data.bci$est[1:1400],.975),
-                                     quantile(fig.data.bci$est[1401:2800],.975)))
+                             ymin = c(quantile(fig.data.bci$est[1:1400],.025),
+                                      quantile(fig.data.bci$est[1401:2800],.025)),
+                             ymax = c(quantile(fig.data.bci$est[1:1400],.975),
+                                      quantile(fig.data.bci$est[1401:2800],.975)))
+  
+  bci_hist <- fig.data.bci %>%
+    ggplot(mapping = aes(group = factor(commercial), x = est, fill = factor(commercial))) +
+    #geom_histogram(aes(y=..density..),position = "identity", alpha = .7) +
+    geom_density(mapping = aes(x = est),position = 'identity',alpha = .7) +
+    #geom_vline(data = mu,aes(xintercept=grp.mean),linetype = "dashed",size = 1) +
+    geom_errorbar(data = fig.data.bci2,mapping = aes(y = c(.03,.07),xmin = ymin,xmax = ymax),color = 'black', width = .02,size = 1,inherit.aes = FALSE) +
+    geom_point(data = mu,aes(x = grp.mean,y = c(.03,.07), fill = factor(commercial)),shape = 21, color = 'black',size = 3,stroke = 2) +
+    theme_classic(base_size = 16) +
+    labs(y = "Density",x = paste0('Estimated effect of ',ylab)) +
+    theme(legend.position = "none") +
+    scale_color_viridis_d(end = .8, aesthetics = c('color','fill'))
+    
   
   bci2 <- fig.data.bci2 %>%
     ggplot(mapping = aes(x = factor(commercial), color = factor(commercial))) +
     geom_errorbar(mapping = aes(ymin = ymin,ymax = ymax),color = 'black', width = .1) +
     geom_point(mapping = aes(y = mean), size = 3) +
     scale_x_discrete(labels=c("0" = "Not commercially valuable", "1" = "Commercially valuable")) +
-    theme_classic() +
+    theme_classic(base_size = 16) +
     labs(x = NULL,y = paste0('Estimated effect of ',ylab)) +
-    theme(legend.position = "none")
+    theme(legend.position = "none") +
+    scale_color_viridis_d(end = .8, aesthetics = c('color','fill'))
   
   if(save == TRUE){
-    ggsave(paste0('results/graphics/mu.90.',x,'.png'),mu_90)
-    ggsave(paste0('results/graphics/mu.95.',x,'.png'),mu_95)
-    ggsave(paste0('results/graphics/per.sp.',x,'.png'),per.sp)
-    ggsave(paste0('results/graphics/bci.',x,'.png'),bci)
-    ggsave(paste0('results/graphics/bci2.',x,'.png'),bci2)
+    ggsave(paste0('results/graphics/mu.90.',x,'.png'),mu_90,width = 10,height = 6.5)
+    ggsave(paste0('results/graphics/mu.95.',x,'.png'),mu_95,width = 10,height = 6.5)
+    ggsave(paste0('results/graphics/per.sp.mu.',x,'.png'),per.sp.mu,width = 10,height = 6.5)
+    ggsave(paste0('results/graphics/per.sp.full.',x,'.png'),per.sp.full,width = 10,height = 6.5)
+    ggsave(paste0('results/graphics/bci.',x,'.png'),bci,width = 10,height = 6.5)
+    ggsave(paste0('results/graphics/bci_hist.',x,'.png'),bci_hist,width = 10,height = 6.5)
+    ggsave(paste0('results/graphics/bci2.',x,'.png'),bci2,width = 10,height = 6.5)
   }
-  return(list(mu_90,mu_95,per.sp, bci, bci2))
+  return(list(mu_90=mu_90,
+              mu_95=mu_95,
+              per.sp.mu=per.sp.mu,
+              per.sp.full = per.sp.full,
+              bci=bci,
+              bci_hist=bci_hist,
+              bci2=bci2))
 }
 
-bayes_predict_plot(res,'dr',save = TRUE)
-bayes_predict_plot(res,'intf',save = TRUE)
+dr_plot <- bayes_predict_plot(res,'dr',save = TRUE)
+intf_plot <- bayes_predict_plot(res,'intf',save = TRUE)
+
+dr_plot_grid <- grid.arrange(dr_plot$per.sp.full + theme_classic() + ggtitle('a)') + theme(legend.position = "top",legend.title = element_blank()),
+                             dr_plot$bci_hist + theme_classic() + ggtitle('b)') + theme(legend.position = 'none'),nrow = 1)
+ggsave('results/graphics/dr_plot.png',dr_plot_grid,width = 8, height = 4)
+intf_plot_grid <- grid.arrange(intf_plot$per.sp.full + ggtitle('a)') + theme_classic() + theme(legend.position = "top",legend.title = element_blank()),
+                               intf_plot$bci_hist + ggtitle('b)') + theme_classic() + theme(legend.position = 'none'),nrow = 1)
+ggsave('results/graphics/intf_plot.png',intf_plot_grid,width = 8, height = 4)
 
 # Ordered graph + labeled sensitive species (possibly supplemental figure)
 
@@ -209,19 +265,24 @@ mu <- summ[grep("mu", vars),cols]
 sigma <- summ[grep("sigma", vars),cols]
 p <- summ[grep("p", vars),cols]
 
-raw <- rbind(p,mu[-1,],sigma[6:7,]) %>%
-  cbind(SD = NA)
-raw[5:10,'SD'] <- sigma[c(1:5,8),'mean']
-
+raw <- rbind(p,mu,sigma[-c(10:11),])
 raw <- data.frame(raw)
+rownames(raw)
+parameter_names <- c('Observer','Time of day','Site SD','Species SD','Intercept mean','Canopy height mean','Distance to road mean','Distance to road * commercial status mean','Intact forest mean','Intact forest * commercial status mean','water mean','Intercept SD','Canopy height SD','Distance to road SD','Distance to road * commercial status SD','Intact forest SD','Intact forest * commercial status SD','Site effect SD','Transect effect SD','water SD')
+
+ordered_parameters <- c('Observer','Time of day','Site SD','Species SD','Intercept mean','Intercept SD','Canopy height mean','Canopy height SD','Distance to road mean','Distance to road SD','Distance to road * commercial status mean','Distance to road * commercial status SD','Intact forest mean','Intact forest SD','Intact forest * commercial status mean','Intact forest * commercial status SD','water mean','water SD','Site effect SD','Transect effect SD')
 
 stats_tab <- raw %>%
+  data.frame() %>%
   tibble() %>%
-  bind_cols(Parameter = rownames(raw),.) %>%
-  relocate(SD,.before = Rhat) %>%
-  gt() %>% 
-  cols_label(mean = 'Mean', X2.5. = '2.5% quantile', X97.5. = '97.5% quantile',n.eff = 'Effective sample size') %>%
-  fmt_number (columns = vars(mean, `X2.5.`, `X97.5.`,Rhat,SD), decimals = 2)
+  bind_cols(Parameter = parameter_names,.)%>%
+  mutate(Parameter =  factor(Parameter, levels = ordered_parameters)) %>%
+  arrange(Parameter) %>%
+  gt() %>%
+  cols_label(mean = 'Mean', sd = 'SD', X2.5. = '2.5% quantile', X97.5. = '97.5% quantile',n.eff = 'Effective sample size') %>%
+  fmt_number (columns = vars(mean, sd, `X2.5.`, `X97.5.`,Rhat), decimals = 2) %>%
+  tab_row_group(group = "Detection",rows = c(1:4)) %>%
+  tab_row_group(group = "Occupancy",rows = c(5:20))
 
 gtsave(stats_tab,filename = 'results/graphics/tbl_param.png')
 
