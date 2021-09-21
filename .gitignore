@@ -3,3 +3,5 @@
 .RData
 .Ruserdata
 src/RPresence/
+*.tmp
+*.ini

@@ -1,7 +1,7 @@
 ##### Controller for MCMC runs of occupancy models
 # Author: Katherine Lauck
 # Last updated: 27 May 2020
-#
+
 # This script runs MCMC threads in parallel using detection/nondetection data collected in collaboration with Planet Indonesia during 2018 and collated using data.R
 # 
 
